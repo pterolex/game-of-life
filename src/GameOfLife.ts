@@ -12,8 +12,7 @@ export default class GameOfLife {
 
   constructor(initialState: FieldStateArray, displayEngine?: DisplayEngine) {
     this.fieldState = new FieldState({
-      fieldHeight: initialState.length,
-      fieldWidth: initialState[0].length,
+      initialState,
     });
 
     this.fieldState.setState(initialState);
@@ -29,7 +28,7 @@ export default class GameOfLife {
     return this.fieldState.getState();
   }
 
-  tick() {
+  evolve() {
     this.fieldState.calculateNextFieldState();
   }
 
@@ -41,7 +40,7 @@ export default class GameOfLife {
     for (const iteration of iterations) {
       console.clear();
 
-      this.tick();
+      this.evolve();
 
       console.log(`Iteration: ${iteration}`);
 

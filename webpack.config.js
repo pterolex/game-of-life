@@ -6,8 +6,7 @@ module.exports = {
     filename: "build.js",
     path: resolve(__dirname, "dist"),
     library: {
-      name: "GameOfLife",
-      type: "umd",
+      type: "commonjs2",
     },
   },
   module: {

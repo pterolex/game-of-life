@@ -1,33 +1,7 @@
 import GameOfLife from "./GameOfLife";
 
 describe("Game of life", () => {
-  it("should return correct state after a few ticks", async () => {
-    const initialState = [
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0],
-      [0, 0, 0, 0, 1],
-      [0, 0, 0, 0, 0],
-    ];
-
-    const game = new GameOfLife(initialState);
-
-    game.tick();
-
-    const nextState = game.getState();
-
-    console.log("nextState1", nextState);
-
-    expect(nextState).toMatchObject([
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 1],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-    ]);
-  });
-
-  it.only("should return correct state after a tick", async () => {
+  it("should return correct state after a tick", async () => {
     const initialState = [
       [0, 0, 0, 0, 0],
       [0, 0, 1, 0, 0],
@@ -38,11 +12,9 @@ describe("Game of life", () => {
 
     const game = new GameOfLife(initialState);
 
-    game.tick();
+    game.evolve();
 
     const nextState = game.getState();
-
-    console.log("nextState2", nextState);
 
     expect(nextState).toMatchObject([
       [0, 0, 0, 0, 0],
@@ -51,5 +23,83 @@ describe("Game of life", () => {
       [0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0],
     ]);
+  });
+
+  it("should return correct state with oscillator", async () => {
+    const initialState = [
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+    ];
+
+    const game = new GameOfLife(initialState);
+
+    game.evolve();
+
+    const nextState = game.getState();
+
+    console.log("nextState2", nextState);
+
+    expect(nextState).toMatchObject([
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 1, 1, 1, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ]);
+  });
+
+  test("Positive. Beacon.", () => {
+    const initialState = [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 0],
+      [0, 0, 0, 0, 1, 1, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+    ];
+    const game = new GameOfLife(initialState);
+
+    game.evolve();
+
+    console.info("beacon", game.getState());
+
+    const expectState = [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 1, 0],
+      [0, 0, 0, 0, 0, 1, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    expect(game.getState()).toEqual(expectState);
+  });
+
+  test("Positive. Toad.", () => {
+    const initialState = [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+    ];
+    const game = new GameOfLife(initialState);
+
+    game.evolve();
+
+    const expectState = [
+      [0, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 1, 0],
+      [0, 0, 1, 0, 0, 1, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    expect(game.getState()).toEqual(expectState);
   });
 });
