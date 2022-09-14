@@ -91,6 +91,13 @@ export default class FieldState {
       this.fieldHeight
     );
 
+    // this.newStateArray = new this.Array2DClass(
+    //   // @ts-ignore
+    //   null,
+    //   this.fieldWidth,
+    //   this.fieldHeight
+    // );
+
     for (let i = 0; i < this.fieldWidth; i++) {
       for (let j = 0; j < this.fieldHeight; j++) {
         const newValue = this.calculatePointNextState(i, j);
