@@ -1,50 +1,88 @@
+// import copyArrayOfCoordinates from "./utils/copyArray";
+
 export type FieldStateArray = number[][];
 /* eslint-disable no-plusplus */
 type FieldStateConstructor = {
   initialState: FieldStateArray;
 };
 
-const FILLED_STATE_PROBABILITY_COEFFICIENT = 0.9;
+type Coordinate = number[];
+type CoordinatesCacheArray = Coordinate[];
+
+// const FILLED_STATE_PROBABILITY_COEFFICIENT = 0.9;
 const POINT_LIVE_STATE = 1;
 const POINT_DEAD_STATE = 0;
 
 export default class FieldState {
-  private previousStateArray: FieldStateArray;
+  // private previousStateArray: FieldStateArray;
+  private previousStateArray: Uint8Array;
 
-  private newStateArray: FieldStateArray;
+  private newStateArray: Uint8Array;
+  // private newStateArray: FieldStateArray;
 
   private fieldWidth: number;
 
   private fieldHeight: number;
 
+  private previousLiveCoordinates: CoordinatesCacheArray;
+
+  private newLiveCoordinates: CoordinatesCacheArray;
+
   constructor({ initialState }: FieldStateConstructor) {
-    this.previousStateArray = JSON.parse(JSON.stringify(initialState));
-    this.newStateArray = JSON.parse(JSON.stringify(initialState));
+    this.previousStateArray = new Uint8Array(initialState.flat());
+    this.newStateArray = new Uint8Array(initialState.flat());
+    // this.newStateArray = JSON.parse(JSON.stringify(initialState));
+    // this.newStateArray = copyArrayOfCoordinates(initialState);
 
     this.fieldWidth = initialState[0].length;
     this.fieldHeight = initialState.length;
+    this.previousLiveCoordinates = [];
+    this.newLiveCoordinates = [];
+
+    // this.preCalculateLivePoints();
+  }
+
+  private calculateIndexInArray(x: number, y: number) {
+    return this.fieldWidth * y + x;
+  }
+
+  getValueInArray(array: Uint8Array, x: number, y: number) {
+    return array.at(this.calculateIndexInArray(x, y));
+  }
+
+  setValueInArray(array: Uint8Array, x: number, y: number, value: number) {
+    return array.set([value], this.calculateIndexInArray(x, y));
   }
 
   getPreviousPointStateByCoordinates(x: number, y: number) {
-    if (x < 0 || y < 0 || x >= this.fieldWidth || y >= this.fieldHeight)
-      return POINT_DEAD_STATE;
+    let xCoordinate = x;
+    let yCoordinate = y;
 
-    const state = this.previousStateArray[y][x];
+    if (x < 0) {
+      xCoordinate = this.fieldWidth - 1;
+    }
+
+    if (x === this.fieldWidth) {
+      xCoordinate = 0;
+    }
+
+    if (y < 0) {
+      yCoordinate = this.fieldHeight - 1;
+    }
+
+    if (y === this.fieldHeight) {
+      yCoordinate = 0;
+    }
+
+    // const state = this.previousStateArray[yCoordinate][xCoordinate];
+    const state = this.getValueInArray(
+      this.previousStateArray,
+      xCoordinate,
+      yCoordinate
+    );
 
     return state || 0;
   }
-
-  // initRandomState() {
-  //   for (let i = 0; i < this.fieldHeight; i++) {
-  //     for (let j = 0; j < this.fieldWidth; j++) {
-  //       this.previousStateArray[i][j] =
-  //         Math.random() > FILLED_STATE_PROBABILITY_COEFFICIENT
-  //           ? POINT_LIVE_STATE
-  //           : POINT_DEAD_STATE;
-  //       this.newStateArray[i][j] = this.previousStateArray[i][j];
-  //     }
-  //   }
-  // }
 
   calculatePointNextState(x: number, y: number) {
     const currentState = this.getPreviousPointStateByCoordinates(x, y);
@@ -68,30 +106,70 @@ export default class FieldState {
     return POINT_DEAD_STATE;
   }
 
-  // setPointState(x: number, y: number, value: number) {
-  //   this.previousStateArray[x][y] = value;
-  //   this.newStateArray[x][y] = value;
+  // preCalculateLivePoints() {
+  //   for (let i = 0; i < this.fieldWidth; i++) {
+  //     for (let j = 0; j < this.fieldHeight; j++) {
+  //       const currentState = this.getPreviousPointStateByCoordinates(i, j);
+  //       const isAlive = currentState === POINT_LIVE_STATE;
+
+  //       if (isAlive) {
+  //         this.newLiveCoordinates.push([i, j]);
+  //       }
+  //     }
+
+  //     console.log("preCalculateLivePoints", this.newLiveCoordinates);
+  //   }
   // }
 
   calculateNextFieldState() {
-    this.previousStateArray = JSON.parse(JSON.stringify(this.newStateArray));
+    // this.previousStateArray = copyArrayOfCoordinates(this.newStateArray);
+    this.previousStateArray = this.newStateArray.slice(0);
+    // this.previousStateArray = JSON.parse(JSON.stringify(this.newStateArray));
+
+    // this.previousLiveCoordinates = this.newLiveCoordinates;
+    // this.newLiveCoordinates = [];
+
+    // for (let i = 0; i <this.previousLiveCoordinates.length; i++) {
+    //   const [x,y] = this.previousLiveCoordinates[i];
+    //   this.newStateArray[x][y] = this.calculatePointNextState(x, y);
+
+    //   if (this.newStateArray[x][y] === POINT_LIVE_STATE) {
+    //     this.newLiveCoordinates.push([x, y]);
+    //   }
+    // }
+
+    // const newValue = this.calculatePointNextState(0, 0);
+    // this.setValueInArray(this.newStateArray, 0, 0, newValue);
 
     for (let i = 0; i < this.fieldWidth; i++) {
       for (let j = 0; j < this.fieldHeight; j++) {
-        this.newStateArray[j][i] = this.calculatePointNextState(i, j);
+        // this.newStateArray[j][i] = this.calculatePointNextState(i, j);
+
+        const newValue = this.calculatePointNextState(i, j);
+        this.setValueInArray(this.newStateArray, i, j, newValue);
+
+        // if (this.newStateArray[j][i] === POINT_LIVE_STATE) {
+        //   this.newLiveCoordinates.push([i, j]);
+        // }
       }
     }
-  }
-
-  setState(state: FieldStateArray) {
-    this.previousStateArray = JSON.parse(JSON.stringify(state));
-    this.newStateArray = JSON.parse(JSON.stringify(state));
-
-    this.fieldWidth = state[0].length;
-    this.fieldHeight = state.length;
+    // console.log("this.newLiveCoordinates", this.newLiveCoordinates);
   }
 
   getState() {
-    return this.newStateArray;
+    const stateArray = [];
+    // const array = Array.from(this.newStateArray);
+
+    // while (array.length > 0) stateArray.push(array.splice(0, this.fieldWidth));
+
+    for (let i = 0; i < this.fieldHeight; i++) {
+      stateArray.push(
+        this.newStateArray
+          .subarray(i * this.fieldWidth, i * this.fieldWidth + this.fieldWidth)
+          .entries()
+      );
+    }
+
+    return stateArray;
   }
 }

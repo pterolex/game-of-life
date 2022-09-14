@@ -14,8 +14,6 @@ describe("Game of life: field state", () => {
       initialState,
     });
 
-    fieldState.setState(initialState);
-
     const internalState = fieldState.getState();
 
     expect(internalState).toMatchObject(initialState);
@@ -33,8 +31,6 @@ describe("Game of life: field state", () => {
     const fieldState = new FieldState({
       initialState,
     });
-
-    fieldState.setState(initialState);
 
     const nextPoint1State = fieldState.calculatePointNextState(3, 3);
 

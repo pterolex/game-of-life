@@ -13,4 +13,4 @@ const initialState = [
 
 const game = new GameOfLife(initialState, displayEngine);
 
-game.run();
+game.evolve();

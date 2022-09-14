@@ -3,7 +3,7 @@
 import ConsoleDisplayEngine from "./displayEngines/ConsoleDisplayEngine";
 import DisplayEngine from "./displayEngines/DisplayEngineInterface";
 import FieldState, { FieldStateArray } from "./FieldState";
-import sleep from "./utils/sleep";
+// import sleep from "./utils/sleep";
 
 export default class GameOfLife {
   private fieldState: FieldState;
@@ -14,8 +14,6 @@ export default class GameOfLife {
     this.fieldState = new FieldState({
       initialState,
     });
-
-    this.fieldState.setState(initialState);
 
     if (!displayEngine) {
       this.displayEngine = new ConsoleDisplayEngine();
@@ -32,21 +30,21 @@ export default class GameOfLife {
     this.fieldState.calculateNextFieldState();
   }
 
-  async run() {
-    this.displayEngine?.draw(this.fieldState.getState());
+  // async run() {
+  //   this.displayEngine?.draw(this.fieldState.getState());
 
-    const iterations = new Array(0).fill(0);
+  //   const iterations = new Array(0).fill(0);
 
-    for (const iteration of iterations) {
-      console.clear();
+  //   for (const iteration of iterations) {
+  //     console.clear();
 
-      this.evolve();
+  //     this.evolve();
 
-      console.log(`Iteration: ${iteration}`);
+  //     console.log(`Iteration: ${iteration}`);
 
-      this.displayEngine?.draw(this.fieldState.getState());
+  //     this.displayEngine?.draw(this.fieldState.getState());
 
-      await sleep(100);
-    }
-  }
+  //     await sleep(100);
+  //   }
+  // }
 }
