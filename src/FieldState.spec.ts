@@ -1,3 +1,4 @@
+import Array2D from "./Array2D/Array2D";
 import FieldState from "./FieldState";
 
 describe("Game of life: field state", () => {
@@ -10,9 +11,7 @@ describe("Game of life: field state", () => {
       [0, 0, 0, 0, 0],
     ];
 
-    const fieldState = new FieldState({
-      initialState,
-    });
+    const fieldState = new FieldState(initialState, Array2D);
 
     const internalState = fieldState.getState();
 
@@ -28,9 +27,7 @@ describe("Game of life: field state", () => {
       [0, 0, 0, 0, 0],
     ];
 
-    const fieldState = new FieldState({
-      initialState,
-    });
+    const fieldState = new FieldState(initialState, Array2D);
 
     const nextPoint1State = fieldState.calculatePointNextState(3, 3);
 

@@ -1,25 +1,12 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
-import ConsoleDisplayEngine from "./displayEngines/ConsoleDisplayEngine";
-import DisplayEngine from "./displayEngines/DisplayEngineInterface";
 import FieldState, { FieldStateArray } from "./FieldState";
-// import sleep from "./utils/sleep";
+// import Array2D from "./Array2D/Array2D";
+import Array2DWithTypedArray from "./Array2D/Array2DWithTypedArray";
 
 export default class GameOfLife {
   private fieldState: FieldState;
 
-  private displayEngine?: DisplayEngine;
-
-  constructor(initialState: FieldStateArray, displayEngine?: DisplayEngine) {
-    this.fieldState = new FieldState({
-      initialState,
-    });
-
-    if (!displayEngine) {
-      this.displayEngine = new ConsoleDisplayEngine();
-    } else {
-      this.displayEngine = displayEngine;
-    }
+  constructor(initialState: FieldStateArray) {
+    this.fieldState = new FieldState(initialState, Array2DWithTypedArray);
   }
 
   getState(): FieldStateArray {
@@ -29,22 +16,4 @@ export default class GameOfLife {
   evolve() {
     this.fieldState.calculateNextFieldState();
   }
-
-  // async run() {
-  //   this.displayEngine?.draw(this.fieldState.getState());
-
-  //   const iterations = new Array(0).fill(0);
-
-  //   for (const iteration of iterations) {
-  //     console.clear();
-
-  //     this.evolve();
-
-  //     console.log(`Iteration: ${iteration}`);
-
-  //     this.displayEngine?.draw(this.fieldState.getState());
-
-  //     await sleep(100);
-  //   }
-  // }
 }
